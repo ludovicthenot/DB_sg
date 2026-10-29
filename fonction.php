@@ -4,7 +4,7 @@ function compterquetesRestanctes(array $quetes): int
     $nombre = 0;
 
     foreach ($quetes as $quete) {
-        if ($quete["etat"] === false) {
+        if ((int) $quete['etat'] === 0) {
             $nombre++;
         }
     }
