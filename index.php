@@ -1,4 +1,5 @@
 <?php
+require __DIR__ . '/securite.php';
 require_once __DIR__ . '/fonction.php';
 require_once __DIR__ . '/connexion.php';
 
@@ -16,6 +17,8 @@ require __DIR__ . '/asset/header.php';
     <h1>Quêtes :</h1>
 
     <form action="ajouter.php" method="post">
+        <input type="hidden" name="csrf" value="<?php echo htmlspecialchars($_SESSION['csrf']); ?>">
+
         <label for="nom">Nom de la quête</label>
         <input id="nom" name="nom" required maxlength="255">
 

@@ -1,4 +1,6 @@
 <?php
+require __DIR__ . '/securite.php';
+verifierFormulaire();
 
 $nom = $_POST['nom'] ?? '';
 $etat = $_POST['etat'] ?? '';
