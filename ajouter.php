@@ -1,5 +1,7 @@
 <?php
 require __DIR__ . '/securite.php';
+require __DIR__ . '/connexion.php';
+
 verifierFormulaire();
 
 $nom = $_POST['nom'] ?? '';
@@ -21,7 +23,7 @@ if ($etat !== '0' && $etat !== '1') {
     exit('L\'état doit être 0 ou 1.');
 }
 
-require __DIR__ . '/connexion.php';
+
 
 $requete = $pdo->prepare(
     'INSERT INTO quete (nom, etat)
@@ -32,6 +34,8 @@ $requete->execute([
     'nom' => $nom,
     'etat' => $etat
 ]);
+
+$_SESSION['message'] = 'La quete a bien été ajoutée.';
 
 header('Location: index.php', true, 303);
 exit;
