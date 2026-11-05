@@ -100,6 +100,10 @@ require __DIR__ . '/asset/header.php';
     </form>
 
     <p>
+        <a href="lire-export.php">Consulter le dernier export</a>
+    </p>
+
+    <p>
         Quêtes affichées : <?php echo $total; ?><br>
         Quêtes a faire : <?php echo $restantes; ?><br>
         Quêtes terminées : <?php echo $terminer; ?>
