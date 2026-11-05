@@ -10,7 +10,11 @@ if (!in_array($filtre, ['toutes', 'a-faire', 'terminee'], true)) {
 }
 
 if ($filtre === 'toutes') {
-    $requete = $pdo->query('SELECT * FROM quete');
+    $requete = $pdo->query(
+        'SELECT id_quete, nom, etat
+         FROM quete
+         ORDER BY id_quete DESC'
+    );
 } else {
     $etat = 0;
 
@@ -19,7 +23,10 @@ if ($filtre === 'toutes') {
     }
 
     $requete = $pdo->prepare(
-        'SELECT id_quete, nom, etat FROM quete WHERE etat = :etat'
+        'SELECT id_quete, nom, etat
+         FROM quete
+         WHERE etat = :etat
+         ORDER BY id_quete DESC'
     );
     
     $requete->execute([
@@ -102,9 +109,9 @@ require __DIR__ . '/asset/header.php';
                     <?php echo htmlspecialchars($q['nom'], ENT_QUOTES, 'UTF-8'); ?>
 
                     <?php if ((int) $q['etat'] === 1) { ?>
-                        <span style="color: green;">Terminée</span>
+                        <span>Terminée</span>
                     <?php } else { ?>
-                        <span style="color: red;">À faire</span>
+                        <span>À faire</span>
                     <?php } ?>
                 </li>
             <?php endforeach; ?>
