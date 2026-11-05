@@ -28,12 +28,10 @@ if ($filtre === 'toutes') {
          WHERE etat = :etat
          ORDER BY id_quete DESC'
     );
-    
-    $requete->execute([
-            'etat' => $etat
-    ]
 
-    );
+    $requete->execute([
+        'etat' => $etat
+    ]);
 }
 
 $quetes = $requete->fetchAll();
@@ -50,22 +48,23 @@ if (!in_array($theme, ['clair', 'sombre'], true)) {
 
 require __DIR__ . '/asset/header.php';
 ?>
-    <main class="theme-<?php echo htmlspecialchars($theme, ENT_QUOTES, 'UTF-8'); ?>">
-        <h1>Quêtes :</h1>
-    
+<main class="theme-<?php echo htmlspecialchars($theme, ENT_QUOTES, 'UTF-8'); ?>">
+    <h1>Quêtes :</h1>
+
     <?php if (isset($_SESSION['message'])): ?>
-    
         <p>
             <?php echo htmlspecialchars($_SESSION['message'], ENT_QUOTES, 'UTF-8'); ?>
         </p>
         <?php unset($_SESSION['message']); ?>
     <?php endif; ?>
+
     <p>Filtre choisi: <?php echo htmlspecialchars($filtre); ?></p>
+
     <form action="ajouter.php" method="post">
         <input type="hidden" name="csrf" value="<?php echo htmlspecialchars($_SESSION['csrf']); ?>">
 
         <label for="nom">Nom de la quête</label>
-        <input id="nom" name="nom" required maxlength="255">
+        <input id="nom" name="nom" required maxlength="150">
 
         <label for="etat">État</label>
         <select id="etat" name="etat">
@@ -75,10 +74,12 @@ require __DIR__ . '/asset/header.php';
 
         <button type="submit">Ajouter</button>
     </form>
+
     <form action="preference.php" method="post">
-        <input type="hidden"
-        name="csrf"
-        value="<?php echo htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8');  ?>"
+        <input
+            type="hidden"
+            name="csrf"
+            value="<?php echo htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8'); ?>"
         >
         <label for="theme">Affichage :</label>
         <select name="theme" id="theme">
@@ -87,16 +88,29 @@ require __DIR__ . '/asset/header.php';
         </select>
         <button type="submit">Enregistrer le theme</button>
     </form>
+
+    <form action="exporter.php" method="post">
+        <input
+            type="hidden"
+            name="csrf"
+            value="<?php echo htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8'); ?>"
+        >
+
+        <button type="submit">Exporter les quêtes en JSON</button>
+    </form>
+
     <p>
         Quêtes affichées : <?php echo $total; ?><br>
         Quêtes a faire : <?php echo $restantes; ?><br>
         Quêtes terminées : <?php echo $terminer; ?>
     </p>
+
     <nav>
         <a href="index.php">Toute les quêtes</a>
         <a href="index.php?etat=a-faire">À faire</a>
         <a href="index.php?etat=terminee">Terminées</a>
     </nav>
+
     <?php if (empty($quetes)): ?>
 
         <p>Aucune quête ne correspond à ce filtre.</p>
