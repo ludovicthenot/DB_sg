@@ -1,0 +1,22 @@
+main {
+    padding: 1.5rem;
+    min-height: 80vh;
+}
+
+.theme-clair {
+    background-color: #ffffff;
+    color: #202020;
+}
+
+.theme-sombre {
+    background-color: #202020;
+    color: #f5f5f5;
+}
+
+.theme-clair a {
+    color: #174ea6;
+}
+
+.theme-sombre a {
+    color: #a8c7fa;
+}

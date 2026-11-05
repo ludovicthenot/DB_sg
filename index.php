@@ -35,9 +35,17 @@ $total = count($quetes);
 $restantes = compterquetesRestanctes($quetes);
 $terminer = $total - $restantes;
 
+$theme = $_COOKIE['theme'] ?? 'clair';
+
+if (!in_array($theme, ['clair', 'sombre'], true)) {
+    $theme = 'clair';
+}
+
 require __DIR__ . '/asset/header.php';
 ?>
-    <h1>Quêtes :</h1>
+    <main class="theme-<?php echo htmlspecialchars($theme, ENT_QUOTES, 'UTF-8'); ?>">
+        <h1>Quêtes :</h1>
+    
     <?php if (isset($_SESSION['message'])): ?>
     
         <p>
@@ -60,9 +68,20 @@ require __DIR__ . '/asset/header.php';
 
         <button type="submit">Ajouter</button>
     </form>
-
+    <form action="preference.php" method="post">
+        <input type="hidden"
+        name="csrf"
+        value="<?php echo htmlspecialchars($_SESSION['csrf'], ENT_QUOTES, 'UTF-8');  ?>"
+        >
+        <label for="theme">Affichage :</label>
+        <select name="theme" id="theme">
+            <option value="clair" <?php echo $theme === 'clair' ? 'selected' : ''; ?>>Clair</option>
+            <option value="sombre" <?php echo $theme === 'sombre' ? 'selected' : ''; ?>>Sombre</option>
+        </select>
+        <button type="submit">Enregistrer le theme</button>
+    </form>
     <p>
-        Quêtes au total : <?php echo $total; ?><br>
+        Quêtes affichées : <?php echo $total; ?><br>
         Quêtes a faire : <?php echo $restantes; ?><br>
         Quêtes terminées : <?php echo $terminer; ?>
     </p>
@@ -71,15 +90,27 @@ require __DIR__ . '/asset/header.php';
         <a href="index.php?etat=a-faire">À faire</a>
         <a href="index.php?etat=terminee">Terminées</a>
     </nav>
-    <ul>
-        <?php foreach ($quetes as $q): ?>
-        <li><?php echo htmlspecialchars($q['nom']); ?>
-            <?php if ((int) $q['etat'] === 1) { ?>
-                <span style="color: green;">Terminée</span>
-            <?php } else { ?>
-                <span style="color: red;">À faire</span>
-            <?php } ?>
-        </li>
-        <?php endforeach; ?>
-    </ul>
+    <?php if (empty($quetes)): ?>
+
+        <p>Aucune quête ne correspond à ce filtre.</p>
+
+    <?php else: ?>
+
+        <ul>
+            <?php foreach ($quetes as $q): ?>
+                <li>
+                    <?php echo htmlspecialchars($q['nom'], ENT_QUOTES, 'UTF-8'); ?>
+
+                    <?php if ((int) $q['etat'] === 1) { ?>
+                        <span style="color: green;">Terminée</span>
+                    <?php } else { ?>
+                        <span style="color: red;">À faire</span>
+                    <?php } ?>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+
+    <?php endif; ?>
+</main>
+
 <?php require __DIR__ . '/asset/footer.php'; ?>
