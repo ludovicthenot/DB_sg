@@ -10,8 +10,8 @@ Application PHP/MySQL pour ajouter, filtrer et consulter des quêtes, mémoriser
 - [x] Partie 4 : export et lecture JSON.
 - [ ] Partie 5 : formulaire présent ; traitement de l'upload à terminer.
 - [x] Partie 6 : documentation, configurations d'exemple et exclusions Git.
-- [ ] Partie 7 : classe Quete et découverte des objets.
-- [ ] Partie 8 : séparation du traitement et de la vue.
+- [x] Partie 7 : classe Quete et découverte des objets.
+- [x] Partie 8 : séparation du traitement et de la vue.
 - [ ] Parties 9 et 10 : namespace et routage avec la formatrice.
 
 Les cases décrivent le code en place. Les tests non confirmés sont précisés ci-dessous ; l'upload reste incomplet.
@@ -34,7 +34,8 @@ L'application limite les noms à 150 caractères. L'état 0 signifie « à faire
 
 | Fichier | Rôle |
 | --- | --- |
-| `index.php` | Filtres, requêtes, compteurs, thème et affichage |
+| `index.php` | Lecture de la demande, requêtes et préparation des données |
+| `vues/liste.php` | Affichage du journal et chargement du header/footer |
 | `ajouter.php` | Validation, insertion et confirmation |
 | `securite.php` | Session et contrôle du POST et du jeton CSRF |
 | `preference.php` | Validation et enregistrement du thème |
@@ -45,6 +46,8 @@ L'application limite les noms à 150 caractères. L'état 0 signifie « à faire
 | `asset/` | Header, footer et CSS |
 | `*.exemple.php` | Modèles de configuration locale |
 | `donnees.php` | Anciennes données statiques, non utilisées par la liste actuelle |
+| `decouverte-poo/Quete.php` | Classe de découverte, indépendante de MySQL |
+| `decouverte-poo/test.php` | Affichage de deux objets et de leurs états |
 
 Les exemples du sujet ont été adaptés aux noms du projet : table `quete`, colonne `etat`, filtres `a-faire` et `terminee`.
 
@@ -68,13 +71,13 @@ Aucun message d'erreur relevé pour le filtre. Adaptation des noms SQL et des va
 Après insertion, le traitement place une confirmation dans la session et redirige vers la liste avec HTTP 303. La liste affiche puis supprime le message. Le nom doit être non vide et comporter au maximum 150 caractères ; l'état vaut 0 ou 1.
 
 ### Tests effectués
-Syntaxe PHP et présence des contrôles vérifiées. À confirmer dans le navigateur : confirmation après ajout et disparition au rechargement ; refus d'espaces seuls ; acceptation de 150 caractères et refus de 151 côté serveur ; refus d'un POST sans jeton CSRF.
+Syntaxe PHP et présence des contrôles vérifiées. Un test HTTP avec une session isolée a confirmé que le message apparaît une seule fois puis disparaît au rechargement. À confirmer dans le navigateur : parcours complet d'ajout et confirmation ; refus d'espaces seuls ; acceptation de 150 caractères et refus de 151 côté serveur ; refus d'un POST sans jeton CSRF.
 
 ### Difficultés
 Aucun message d'erreur relevé. La limite HTML initiale de 255 caractères a été remplacée par 150 avec un contrôle serveur supplémentaire. L'extension `mbstring` est active dans la configuration MAMP.
 
 ### Explication du code
-`mb_strlen($nom, 'UTF-8')` compte les caractères. `isset()` détecte le message et `unset()` le retire. Une redirection crée une nouvelle requête HTTP : une variable ordinaire n'y conserve pas sa valeur, contrairement à la session. La session est déjà démarrée dans `securite.php`.
+`mb_strlen($nom, 'UTF-8')` compte les caractères. `index.php` récupère le message dans `$message` puis le retire de la session avec `unset()`. La vue affiche cette variable si c'est une chaîne. Une redirection crée une nouvelle requête HTTP : une variable ordinaire n'y conserve pas sa valeur, contrairement à la session. La session est déjà démarrée dans `securite.php`.
 
 ## Préférence avec un cookie
 
@@ -131,6 +134,34 @@ Le 5 novembre 2026, le formulaire a répondu HTTP 200. Un fichier texte de test 
 
 ### Explication du code
 `enctype="multipart/form-data"` permet l'envoi. `accept` aide seulement à sélectionner un fichier. Le traitement devra utiliser `$_FILES`, `is_uploaded_file()`, `filesize()`, `pathinfo()`, `finfo`, `random_bytes()` et `move_uploaded_file()`. Le type annoncé par le navigateur ne remplace pas la détection côté serveur.
+
+## Découverte des objets : classe Quete
+
+### Fonctionnement
+La classe `Quete` possède les propriétés publiques typées `$nom` et `$terminee`. Le constructeur reçoit le nom et initialise l'état à `false`. `terminer()` passe l'état à `true` et `reprendre()` le remet à `false`. La page `decouverte-poo/test.php` crée « Explorer la forêt » et « Retrouver le grimoire », termine la première et affiche les deux objets dans une liste HTML avec des noms échappés.
+
+### Tests effectués
+Vérifications PHP réussies : deux noms distincts, état initial à faire pour les deux objets, terminaison du premier sans modifier le second, puis retour du premier à faire avec `reprendre()`. La page répond HTTP 200 et affiche les deux noms avec les états « Terminée » et « En cours ». Syntaxe des deux fichiers valide. Accès : `http://localhost:8888/decouverte-poo/test.php` dans la configuration actuelle.
+
+### Difficultés
+Aucune erreur constatée pendant ces vérifications. La classe utilise `nom`, conformément au vocabulaire du projet.
+
+### Explication du code
+Une propriété conserve une information ; une méthode réalise une action. `new` crée une nouvelle instance et déclenche son constructeur. `$this` désigne l'objet courant : modifier une instance ne modifie pas l'autre. `$quete->nom` accède à la propriété d'un objet, tandis que `$quete['nom']` accède à une entrée de tableau. Aucun de ces objets n'est relié à MySQL : appeler `terminer()` ne sauvegarde rien en base. Les objets de la page de test sont recréés à chaque requête.
+
+## Séparation du traitement et de l'affichage
+
+### Fonctionnement
+`index.php` conserve le démarrage de session, la validation du filtre, les requêtes SQL, la lecture du cookie, les compteurs et la préparation du message. Il charge ensuite `vues/liste.php`, qui contient le HTML, les formulaires, la liste, les affichages PHP et les inclusions du header/footer.
+
+### Tests effectués
+Comparaison HTTP avant/après sur six cas : liste complète, deux filtres, filtre inconnu, thème sombre et cookie invalide. Les réponses et leur contenu sont identiques après normalisation des espaces et des jetons CSRF. Les pages de lecture JSON et d'upload ainsi que le CSS répondent HTTP 200. Le message de session a été vérifié sur deux requêtes successives. La syntaxe PHP de l'index et de la vue est valide. Les actions des formulaires sont conservées ; aucun ajout en base ni écrasement d'export n'a été nécessaire pour ces tests.
+
+### Difficultés
+Les inclusions du header et du footer ont été adaptées à `__DIR__ . '/../asset/...'` depuis le sous-dossier `vues`. Les liens HTML restent relatifs à l'adresse `index.php` demandée par le navigateur.
+
+### Explication du code et lien avec MVC
+La vue présente les données préparées, notamment `$quetes`, `$total`, `$restantes`, `$terminer`, `$theme` et `$message`. Le contrôleur reçoit la demande et coordonne les traitements : `index.php` commence à tenir ce rôle. Le modèle gère les données et les règles métier. Le projet n'est pas encore entièrement MVC : les requêtes SQL restent dans `index.php`. Lors d'une prochaine restructuration, elles pourraient être déplacées dans une classe dédiée à l'accès aux quêtes, par exemple `QueteRepository`. La classe de découverte `Quete` reste indépendante de cette évolution.
 
 ## Git et reprise
 
