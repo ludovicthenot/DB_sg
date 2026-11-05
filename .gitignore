@@ -1,0 +1,9 @@
+# Configurations propres à chaque installation
+/config.php
+/connexion.php
+/stockage.php
+
+# Données privées à conserver hors de la racine web
+/quetes.json
+/uploads/
+/donnees-privees-quetes/

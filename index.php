@@ -104,6 +104,10 @@ require __DIR__ . '/asset/header.php';
     </p>
 
     <p>
+        <a href="upload.php">Envoyer un fichier texte</a>
+    </p>
+
+    <p>
         Quêtes affichées : <?php echo $total; ?><br>
         Quêtes a faire : <?php echo $restantes; ?><br>
         Quêtes terminées : <?php echo $terminer; ?>

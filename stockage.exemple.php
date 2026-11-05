@@ -1,5 +1,6 @@
 <?php
 
+// Copier vers stockage.php et adapter ce chemin à un dossier hors racine web.
 $dossierPrive = 'C:/MAMP/donnees-privees-quetes';
 
 $dossierUploads = $dossierPrive . '/uploads';

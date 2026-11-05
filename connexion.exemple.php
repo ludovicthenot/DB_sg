@@ -1,7 +1,10 @@
 <?php
+
+// Copier vers connexion.php après avoir préparé config.php.
 $config = require __DIR__ . '/config.php';
 $dsn = 'mysql:host=' . $config['host'] . ';port=' . $config['port']
     . ';dbname=' . $config['base'] . ';charset=utf8mb4';
+
 try {
     $pdo = new PDO($dsn, $config['utilisateur'], $config['mot_de_passe'], [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
