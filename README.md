@@ -85,7 +85,7 @@ Aucun message d'erreur relevé. La limite HTML initiale de 255 caractères a ét
 Un POST protégé transmet `clair` ou `sombre`. Le cookie expire après sept jours. La page valide sa valeur, sélectionne l'option correspondante et applique une classe CSS. Le thème clair sert de valeur par défaut.
 
 ### Tests effectués
-Ludo a confirmé la conservation du choix au rechargement et le changement visuel des couleurs. Vérification HTTP du 5 novembre 2026 : `sombre` produit `theme-sombre`, `clair` produit `theme-clair`, et `violet` revient à `theme-clair`. La conservation après fermeture et réouverture du navigateur reste à confirmer.
+J'ai vérifié que le choix du thème est conservé au rechargement et que les couleurs changent correctement. Les vérifications HTTP du 5 novembre 2026 donnent les résultats suivants : `sombre` produit `theme-sombre`, `clair` produit `theme-clair`, et `violet` revient à `theme-clair`. Il me reste à confirmer la conservation du thème après fermeture et réouverture du navigateur.
 
 ### Difficultés
 Un slash manquait avant `securite.php` et le `!` manquait devant `in_array`. Corrections effectuées ; les messages d'erreur exacts n'ont pas été relevés. Le CSS ne s'appliquait pas : le header cherchait `styles.css` alors que le fichier s'appelle `style.css`. Le chemin a été corrigé.
@@ -99,7 +99,7 @@ Un slash manquait avant `securite.php` et le `!` manquait devant `in_array`. Cor
 Un formulaire POST protégé déclenche l'export de toutes les quêtes vers `quetes.json`, dans le dossier privé. Un message en session confirme l'opération.
 
 ### Tests effectués
-Ludo a confirmé la création du fichier et la présence des quêtes. Une vérification a confirmé un JSON sous forme de liste avec les champs `id_quete`, `nom` et `etat`. Syntaxe PHP valide.
+J'ai vérifié que le fichier est créé et qu'il contient les quêtes. Le JSON est bien une liste avec les champs `id_quete`, `nom` et `etat`. La vérification de syntaxe PHP n'a signalé aucune erreur.
 
 ### Difficultés
 La variable du chemin a été harmonisée en `$fichierExport`. L'existence des dossiers et leur accessibilité en écriture ont été vérifiées. Aucun message d'erreur d'export signalé.
@@ -113,10 +113,10 @@ La variable du chemin a été harmonisée en `$fichierExport`. L'existence des d
 La page lit le fichier sans requête MySQL. Elle vérifie son existence, le JSON, la structure de liste et le nom de chaque quête. Les noms et les erreurs sont échappés avant affichage.
 
 ### Tests effectués
-Ludo a confirmé la lecture et trois tests : une nouvelle quête n'apparaît qu'après un nouvel export ; un fichier absent produit un message ; un contenu remplacé temporairement par `{` produit une erreur JSON. Les trois tests ont été déclarés réussis. Le 5 novembre 2026, la page a répondu HTTP 200 avec 12 éléments. Restent à tester : liste vide et JSON valide de structure incorrecte.
+J'ai vérifié la lecture du fichier et effectué trois tests : une nouvelle quête n'apparaît qu'après un nouvel export ; un fichier absent produit un message ; un contenu remplacé temporairement par `{` produit une erreur JSON. Ces trois tests ont réussi. Le 5 novembre 2026, la page a répondu HTTP 200 avec 12 éléments. Il me reste à tester une liste vide et un JSON valide dont la structure est incorrecte.
 
 ### Difficultés
-Aucune difficulté signalée pendant les tests confirmés.
+Je n'ai rencontré aucune difficulté pendant ces tests.
 
 ### Explication du code
 `is_file()` vérifie le fichier, `file_get_contents()` le lit et `json_decode(..., true, 512, JSON_THROW_ON_ERROR)` produit des tableaux PHP. `array_is_list()` vérifie la structure. `htmlspecialchars()` affiche les noms comme du texte.

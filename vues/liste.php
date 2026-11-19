@@ -1,14 +1,14 @@
 <?php require __DIR__ . '/../asset/header.php'; ?>
-<main class="theme-<?php echo htmlspecialchars($theme, ENT_QUOTES, 'UTF-8'); ?>">
+<main class="theme-<?php echo htmlspecialchars($theme ?? 'clair', ENT_QUOTES, 'UTF-8'); ?>">
     <h1>Quêtes :</h1>
 
-    <?php if (is_string($message)): ?>
+    <?php if (isset($message) && is_string($message)): ?>
         <p>
             <?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?>
         </p>
     <?php endif; ?>
 
-    <p>Filtre choisi: <?php echo htmlspecialchars($filtre); ?></p>
+    <p>Filtre choisi: <?php echo htmlspecialchars($filtre ?? 'Toute les quêtes', ENT_QUOTES, 'UTF-8'); ?></p>
 
     <form action="ajouter.php" method="post">
         <input type="hidden" name="csrf" value="<?php echo htmlspecialchars($_SESSION['csrf']); ?>">
@@ -33,8 +33,8 @@
         >
         <label for="theme">Affichage :</label>
         <select name="theme" id="theme">
-            <option value="clair" <?php echo $theme === 'clair' ? 'selected' : ''; ?>>Clair</option>
-            <option value="sombre" <?php echo $theme === 'sombre' ? 'selected' : ''; ?>>Sombre</option>
+            <option value="clair" <?php echo ($theme ?? 'clair') === 'clair' ? 'selected' : ''; ?>>Clair</option>
+            <option value="sombre" <?php echo ($theme ?? 'clair') === 'sombre' ? 'selected' : ''; ?>>Sombre</option>
         </select>
         <button type="submit">Enregistrer le theme</button>
     </form>
@@ -58,9 +58,9 @@
     </p>
 
     <p>
-        Quêtes affichées : <?php echo $total; ?><br>
-        Quêtes a faire : <?php echo $restantes; ?><br>
-        Quêtes terminées : <?php echo $terminer; ?>
+        Quêtes affichées : <?php echo $total ?? 0; ?><br>
+        Quêtes a faire : <?php echo $restantes ?? 0; ?><br>
+        Quêtes terminées : <?php echo $terminer ?? 0; ?>
     </p>
 
     <nav>
