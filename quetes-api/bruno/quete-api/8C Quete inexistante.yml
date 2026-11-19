@@ -1,0 +1,18 @@
+info:
+  name: 8C Quete inexistante
+  type: http
+  seq: 8
+
+http:
+  method: GET
+  url: http://127.0.0.1:8000/api/quetes/999999
+  headers:
+    - name: Accept
+      value: application/json
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
